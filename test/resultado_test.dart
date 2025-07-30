@@ -45,16 +45,12 @@ void main() {
         ),
       );
 
-      // Verifica se o botão "Reiniciar" está na tela
       expect(find.text('Reiniciar'), findsOneWidget);
 
-      // Simula o clique no botão
       await tester.tap(find.text('Reiniciar'));
       await tester.pumpAndSettle();
 
-      // Após o clique, espera-se que o PerguntaApp seja renderizado
       expect(find.text('Perguntas'), findsOneWidget);
     });
   });
 }
-    
