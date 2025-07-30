@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_perguntas/questao.dart';
-import 'package:projeto_perguntas/resposta.dart';
 
-main() => runApp(PerguntaApp());
+import 'package:projeto_perguntas/questionario.dart';
+
+import 'package:projeto_perguntas/resultado.dart';
+
+main() => runApp(const PerguntaApp());
 
 class PerguntaApp extends StatefulWidget {
   const PerguntaApp({super.key});
@@ -13,59 +15,84 @@ class PerguntaApp extends StatefulWidget {
 
 class _PerguntaAppState extends State<PerguntaApp> {
   var perguntaSelecionada = 0;
+  var notaTotal = 0;
   final _perguntas = [
     {
       'texto': 'Qual é a sua cor favorita?,',
-      'resposta': ['Azul', 'Vermelho', 'Verde']
+      'resposta': [
+        {'texto': 'Azul', 'nota': 5},
+        {'texto': 'Amarelo', 'nota': 4},
+        {'texto': 'Preto', 'nota': 3},
+        {'texto': 'Vermelho', 'nota': 2},
+      ]
+    },
+    {
+      'texto': 'Qual é o seu prato favorito?',
+      'resposta': [
+        {'texto': 'Pizza', 'nota': 5},
+        {'texto': 'Hambúrguer', 'nota': 1},
+        {'texto': 'Sushi', 'nota': 5},
+        {'texto': 'Macarrão', 'nota': 1},
+      ]
     },
     {
       'texto': 'Qual é o seu esporte favorito?',
-      'resposta': ['Futebol', 'Basquete', 'Vôlei']
+      'resposta': [
+        {'texto': 'Futebol', 'nota': 5},
+        {'texto': 'Basquete', 'nota': 1},
+        {'texto': 'Tênis', 'nota': 5},
+        {'texto': 'Natação', 'nota': 1},
+      ]
     },
     {
       'texto': 'Qual é o seu animal favorito?',
-      'resposta': ['Coelho', 'Cachorro', 'Gato']
+      'resposta': [
+        {'texto': 'Coelho', 'nota': 5},
+        {'texto': 'Cachorro', 'nota': 1},
+        {'texto': 'Gato', 'nota': 5},
+        {'texto': 'Pássaro', 'nota': 1}
+      ]
     },
   ];
 
-  void _responder() {
+  get temPerguntaSelecionada {
+    return perguntaSelecionada < _perguntas.length;
+  }
+
+  void _responder(int nota) {
     if (temPerguntaSelecionada) {
       setState(() {
         perguntaSelecionada++;
+        notaTotal += nota;
       });
     }
   }
 
-  bool get temPerguntaSelecionada {
-    return perguntaSelecionada < _perguntas.length;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<String>? respostas = temPerguntaSelecionada
-        ? _perguntas[perguntaSelecionada]['resposta'] as List<String>
-        : null;
-
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Perguntas'),
+          title: const Center(
+            child: Text(
+              'Perguntas',
+              style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.blue,
+                  fontStyle: FontStyle.normal),
+            ),
+          ),
         ),
         body: temPerguntaSelecionada
-            ? Column(
-                children: [
-                  Questao(
-                    texto: _perguntas[perguntaSelecionada]['texto'] as String,
-                  ),
-                  ...respostas!
-                      .map((e) => Resposta(
-                            texto: e,
-                            onSelected: _responder,
-                          ))
-                      .toList(),
-                ],
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: perguntaSelecionada,
+                responder: _responder,
               )
-            : null,
+            : Resultado(
+                notaTotal: notaTotal,
+              ),
       ),
     );
   }
